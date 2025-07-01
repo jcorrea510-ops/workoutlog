@@ -90,6 +90,12 @@
             transform: translateY(0);
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
         }
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: translateY(0);
+            box-shadow: none;
+        }
         /* Primary button - vibrant gradient */
         .primary-button {
             background: linear-gradient(45deg, #00bcd4, #536dfe); /* Cyan to Indigo gradient */
@@ -173,6 +179,16 @@
             background: linear-gradient(45deg, #dc2626, #ef4444);
         }
 
+        /* New styles for Resume button */
+        .timer-button.resume {
+            background: linear-gradient(45deg, #3b82f6, #60a5fa); /* Blue gradient for resume */
+            color: white;
+            border: none;
+        }
+        .timer-button.resume:hover {
+            background: linear-gradient(45deg, #2563eb, #3b82f6);
+        }
+
 
         /* Section backgrounds - unified dark tones */
         .section-card {
@@ -213,30 +229,35 @@
         #messageBox.info { background-color: #1c2a4a !important; color: #93c5fd !important; border-color: #3b82f6 !important; } /* Dark blue, light blue text, blue border */
 
         /* Total Workout Timer - now at the very top, centered, with inline buttons */
-        .total-workout-timer-compact {
+        .total-workout-timer-container {
             display: flex;
             flex-direction: row; /* Keep time and buttons in a row */
             align-items: center;
-            justify-content: center; /* Center the whole block */
-            padding: 0.1rem 0.3rem; /* Very small padding */
-            background-color: #0d1117; /* Very dark background for minimal footprint */
+            justify-content: space-between; /* Space out the elements */
+            padding: 0.1rem 0.5rem; /* Slightly more padding for better appearance */
+            background-color: #0d1117;
             border-radius: 0.3rem;
             border: 1px solid #30363d;
-            box-shadow: inset 0 0 2px rgba(0, 255, 255, 0.02); /* Even more subtle glow */
-            width: fit-content; /* Shrink to content width */
-            gap: 0.3rem; /* Reduced space between timer and buttons */
-            margin-top: 0.5rem; /* Closer to the top of the app container */
-            margin-bottom: 0.5rem; /* Reduced space before set timer */
+            box-shadow: inset 0 0 2px rgba(0, 255, 255, 0.02);
+            width: 100%; /* Take full width to allow space-between */
+            max-width: 300px; /* Limit width for centering */
+            margin: 0.5rem auto 0.5rem auto; /* Center it with auto margins, reduced top margin */
+            box-sizing: border-box; /* Include padding and border in width */
         }
 
-        .total-workout-timer-compact .timer-display {
+        .total-workout-timer-container .timer-display {
+            font-family: 'Space Mono', monospace; /* Ensure monospaced font */
             font-size: 1.2rem; /* Even smaller font for total timer */
-            margin-bottom: 0; /* No margin below time */
+            margin: 0; /* No margin below time */
             line-height: 1; /* Tighter line height */
+            flex-grow: 1; /* Allow it to grow and push buttons */
+            text-align: center; /* Center the time within its flex item */
+            min-width: 80px; /* Ensure enough space for HH:MM:SS to prevent shift */
+            padding: 0 0.2rem; /* Small padding to prevent text from touching edges */
         }
 
-        .total-workout-timer-compact .timer-buttons-row {
-            display: flex; /* Ensure buttons are in a row */
+        .total-workout-timer-container .timer-buttons-group {
+            display: flex;
             gap: 0.05rem; /* Extremely tight button spacing */
         }
 
@@ -351,9 +372,8 @@
 
         // Timer UI Elements
         let totalWorkoutTimerDisplay;
-        let startWorkoutBtn;
-        let stopWorkoutBtn;
-        let resetWorkoutBtn;
+        let leftWorkoutBtn; // New: Left button for total timer
+        let rightWorkoutBtn; // New: Right button for total timer
 
         let setTimerDisplay;
         let startSetBtn;
@@ -368,6 +388,7 @@
         let totalWorkoutInterval = null;
         let totalWorkoutStartTime = 0;
         let totalWorkoutElapsedTime = 0; // To store elapsed time for pausing
+        let totalWorkoutTimerState = 'stopped'; // 'stopped', 'running', 'paused'
 
         let setTimerInterval = null;
         let setStartTime = 0;
@@ -423,6 +444,65 @@
         }
 
         /**
+         * Updates the text and classes of the total workout timer buttons based on its state.
+         */
+        function updateTotalTimerButtons() {
+            if (!leftWorkoutBtn || !rightWorkoutBtn) return;
+
+            if (totalWorkoutTimerState === 'stopped') {
+                leftWorkoutBtn.textContent = 'Start';
+                leftWorkoutBtn.classList.remove('resume', 'stop');
+                leftWorkoutBtn.classList.add('start');
+                leftWorkoutBtn.disabled = false;
+
+                rightWorkoutBtn.textContent = 'Finish';
+                rightWorkoutBtn.classList.remove('reset');
+                rightWorkoutBtn.classList.add('stop');
+                rightWorkoutBtn.disabled = true; // Finish is disabled until timer starts
+            } else if (totalWorkoutTimerState === 'running') {
+                leftWorkoutBtn.textContent = 'Start';
+                leftWorkoutBtn.classList.remove('resume');
+                leftWorkoutBtn.classList.add('start');
+                leftWorkoutBtn.disabled = true; // Start is disabled when running
+
+                rightWorkoutBtn.textContent = 'Finish';
+                rightWorkoutBtn.classList.remove('reset');
+                rightWorkoutBtn.classList.add('stop');
+                rightWorkoutBtn.disabled = false;
+            } else if (totalWorkoutTimerState === 'paused') {
+                leftWorkoutBtn.textContent = 'Resume';
+                leftWorkoutBtn.classList.remove('start');
+                leftWorkoutBtn.classList.add('resume');
+                leftWorkoutBtn.disabled = false;
+
+                rightWorkoutBtn.textContent = 'Reset';
+                rightWorkoutBtn.classList.remove('stop');
+                rightWorkoutBtn.classList.add('reset');
+                rightWorkoutBtn.disabled = false;
+            }
+        }
+
+        /**
+         * Handles clicks on the left total workout timer button.
+         */
+        function handleLeftWorkoutBtnClick() {
+            if (totalWorkoutTimerState === 'stopped' || totalWorkoutTimerState === 'paused') {
+                startTotalWorkoutTimer();
+            }
+        }
+
+        /**
+         * Handles clicks on the right total workout timer button.
+         */
+        function handleRightWorkoutBtnClick() {
+            if (totalWorkoutTimerState === 'running') {
+                stopTotalWorkoutTimer(); // Finish action
+            } else if (totalWorkoutTimerState === 'paused') {
+                resetTotalWorkoutTimer(); // Reset action
+            }
+        }
+
+        /**
          * Starts the total workout timer.
          */
         function startTotalWorkoutTimer() {
@@ -433,25 +513,32 @@
                 totalWorkoutElapsedTime = Date.now() - totalWorkoutStartTime;
                 totalWorkoutTimerDisplay.textContent = formatTime(totalWorkoutElapsedTime);
             }, 1000);
+            totalWorkoutTimerState = 'running';
+            updateTotalTimerButtons();
             showMessage("Workout timer started!", 'info', 1500);
         }
 
         /**
-         * Stops the total workout timer.
+         * Stops the total workout timer (pauses it).
          */
         function stopTotalWorkoutTimer() {
             clearInterval(totalWorkoutInterval);
             totalWorkoutInterval = null;
-            showMessage("Workout timer stopped.", 'info', 1500);
+            totalWorkoutTimerState = 'paused';
+            updateTotalTimerButtons();
+            showMessage("Workout timer paused.", 'info', 1500);
         }
 
         /**
          * Resets the total workout timer.
          */
         function resetTotalWorkoutTimer() {
-            stopTotalWorkoutTimer();
+            clearInterval(totalWorkoutInterval);
+            totalWorkoutInterval = null;
             totalWorkoutElapsedTime = 0;
             totalWorkoutTimerDisplay.textContent = formatTime(totalWorkoutElapsedTime);
+            totalWorkoutTimerState = 'stopped';
+            updateTotalTimerButtons();
             showMessage("Workout timer reset.", 'info', 1500);
         }
 
@@ -518,7 +605,7 @@
                     categoryDiv.className = 'mb-6';
                     categoryDiv.innerHTML = `
                         <h3 class="category-heading capitalize">${category}</h3>
-                        <ul class="space-y-3" id="ul-${category}"></ul>
+                        <ul class="space-y-3 mt-4" id="ul-${category}"></ul>
                     `;
                     workoutsListContainer.appendChild(categoryDiv);
 
@@ -715,9 +802,8 @@
 
             // Assign Timer UI Elements
             totalWorkoutTimerDisplay = document.getElementById('totalWorkoutTimerDisplay');
-            startWorkoutBtn = document.getElementById('startWorkoutBtn');
-            stopWorkoutBtn = document.getElementById('stopWorkoutBtn');
-            resetWorkoutBtn = document.getElementById('resetWorkoutBtn');
+            leftWorkoutBtn = document.getElementById('leftWorkoutBtn');
+            rightWorkoutBtn = document.getElementById('rightWorkoutBtn');
 
             setTimerDisplay = document.getElementById('setTimerDisplay');
             startSetBtn = document.getElementById('startSetBtn');
@@ -749,9 +835,8 @@
             });
 
             // Timer Event Listeners
-            startWorkoutBtn.addEventListener('click', startTotalWorkoutTimer);
-            stopWorkoutBtn.addEventListener('click', stopTotalWorkoutTimer);
-            resetWorkoutBtn.addEventListener('click', resetTotalWorkoutTimer);
+            leftWorkoutBtn.addEventListener('click', handleLeftWorkoutBtnClick);
+            rightWorkoutBtn.addEventListener('click', handleRightWorkoutBtnClick);
 
             startSetBtn.addEventListener('click', startSetTimer);
             stopSetBtn.addEventListener('click', stopSetTimer);
@@ -759,6 +844,9 @@
 
             // Collapsible "Log New Lift" event listener
             logNewLiftHeader.addEventListener('click', toggleLogNewLift);
+
+            // Initialize total workout timer button states
+            updateTotalTimerButtons();
 
 
             // --- Firebase Initialization ---
@@ -830,13 +918,10 @@
 <body class="min-h-screen bg-gradient-to-br from-gray-900 to-gray-700 text-white font-inter p-4 flex flex-col items-center">
     <div id="app-container">
         <!-- Total Workout Timer - Moved to the very top, centered, with inline buttons -->
-        <div class="total-workout-timer-compact">
+        <div class="total-workout-timer-container">
+            <button id="leftWorkoutBtn" class="timer-button start">Start</button>
             <div id="totalWorkoutTimerDisplay" class="timer-display text-cyan-400">00:00:00</div>
-            <div class="timer-buttons-row">
-                <button id="startWorkoutBtn" class="timer-button start">Start</button>
-                <button id="stopWorkoutBtn" class="timer-button stop">Stop</button>
-                <button id="resetWorkoutBtn" class="timer-button reset">Reset</button>
-            </div>
+            <button id="rightWorkoutBtn" class="timer-button stop">Finish</button>
         </div>
 
         <!-- Set Timer Section (now standalone and smaller) -->
