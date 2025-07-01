@@ -275,6 +275,49 @@
             opacity: 1;
             visibility: visible;
         }
+
+        /* Collapsible "Log New Lift" styles */
+        .collapsible-header {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            padding: 0.75rem 1rem; /* Reduced padding */
+            background-color: #282c34; /* Slightly lighter dark for header */
+            border-radius: 0.75rem; /* Rounded corners */
+            margin-bottom: 0.5rem; /* Space below header */
+            transition: background-color 0.2s ease-in-out;
+            border: 1px solid #30363d; /* Subtle border */
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+        }
+        .collapsible-header:hover {
+            background-color: #3b404b; /* Darker on hover */
+        }
+        .collapsible-header h2 {
+            margin-bottom: 0; /* Remove default margin */
+            font-size: 1.5rem; /* Slightly smaller heading */
+            color: #e6edf3;
+        }
+        .collapsible-icon {
+            margin-left: 0.75rem;
+            transition: transform 0.3s ease-in-out;
+            color: #00bcd4; /* Cyan arrow */
+        }
+        .collapsible-header.open .collapsible-icon {
+            transform: rotate(180deg);
+        }
+        .collapsible-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease-in-out, padding 0.5s ease-in-out;
+            padding-top: 0;
+            padding-bottom: 0;
+        }
+        .collapsible-content.open {
+            max-height: 500px; /* Sufficient height to show content */
+            padding-top: 1rem; /* Add padding when open */
+            padding-bottom: 1rem; /* Add padding when open */
+        }
     </style>
     <!-- Firebase SDK CDN -->
     <script type="module">
@@ -316,6 +359,10 @@
         let startSetBtn;
         let stopSetBtn;
         let resetSetBtn;
+
+        // Collapsible "Log New Lift" elements
+        let logNewLiftHeader;
+        let logNewLiftContent;
 
         // Timer Variables
         let totalWorkoutInterval = null;
@@ -635,6 +682,14 @@
             }
         }
 
+        /**
+         * Toggles the visibility of the "Log New Lift" section.
+         */
+        function toggleLogNewLift() {
+            logNewLiftContent.classList.toggle('open');
+            logNewLiftHeader.classList.toggle('open');
+        }
+
         // Initialize Firebase and UI elements when the window loads
         window.onload = async () => {
             // Assign UI elements to global JS variables
@@ -669,6 +724,11 @@
             stopSetBtn = document.getElementById('stopSetBtn');
             resetSetBtn = document.getElementById('resetSetBtn');
 
+            // Assign Collapsible "Log New Lift" elements
+            logNewLiftHeader = document.getElementById('logNewLiftHeader');
+            logNewLiftContent = document.getElementById('logNewLiftContent');
+
+
             // Populate category dropdown
             categories.forEach(category => {
                 const option = document.createElement('option');
@@ -696,6 +756,9 @@
             startSetBtn.addEventListener('click', startSetTimer);
             stopSetBtn.addEventListener('click', stopSetTimer);
             resetSetBtn.addEventListener('click', resetSetTimer);
+
+            // Collapsible "Log New Lift" event listener
+            logNewLiftHeader.addEventListener('click', toggleLogNewLift);
 
 
             // --- Firebase Initialization ---
@@ -787,10 +850,24 @@
             </div>
         </section>
 
-        <!-- Add Workout Form -->
+        <!-- Workout List -->
         <section class="section-card">
-            <h2 class="text-2xl font-semibold mb-4 text-center text-gray-200">Log New Lift</h2>
-            <div class="space-y-4">
+            <h2 class="text-2xl font-semibold mb-4 text-center text-gray-200">Your Lifts</h2>
+            <div id="workoutsList" class="space-y-6">
+                <!-- Workouts will be rendered here by JavaScript -->
+                <p class="text-gray-400 text-center text-sm">Loading workouts...</p>
+            </div>
+        </section>
+
+        <!-- Collapsible Add Workout Form - Moved to bottom -->
+        <section class="section-card">
+            <div id="logNewLiftHeader" class="collapsible-header">
+                <h2 class="text-2xl font-semibold text-center">Log New Lift</h2>
+                <svg id="logNewLiftIcon" class="collapsible-icon h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                </svg>
+            </div>
+            <div id="logNewLiftContent" class="collapsible-content space-y-4">
                 <input
                     type="text"
                     id="newWorkoutName"
@@ -807,15 +884,6 @@
                 <button id="addWorkoutBtn" class="w-full primary-button">
                     Add Workout
                 </button>
-            </div>
-        </section>
-
-        <!-- Workout List -->
-        <section class="section-card">
-            <h2 class="text-2xl font-semibold mb-4 text-center text-gray-200">Your Lifts</h2>
-            <div id="workoutsList" class="space-y-6">
-                <!-- Workouts will be rendered here by JavaScript -->
-                <p class="text-gray-400 text-center text-sm">Loading workouts...</p>
             </div>
         </section>
     </div>
