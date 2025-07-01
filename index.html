@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quantum Lift Log</title>
+    <title>Workout Log</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Google Fonts: Inter for clean text, Space Mono for futuristic mono-spaced elements -->
@@ -19,7 +19,7 @@
             justify-content: center;
             align-items: flex-start; /* Align to top */
             min-height: 100vh;
-            padding: 1.5rem; /* Increased padding */
+            padding: 0.5rem; /* Reduced padding */
             color: #c9d1d9; /* Default light gray text */
         }
         #app-container {
@@ -28,12 +28,12 @@
             box-shadow: 0 15px 30px rgba(0, 255, 255, 0.1), 0 5px 15px rgba(0, 255, 255, 0.05); /* Subtle cyan glow */
             max-width: 520px; /* Slightly wider */
             width: 100%;
-            padding: 2rem; /* Increased padding */
+            padding: 1.5rem; /* Reduced padding */
             display: flex;
             flex-direction: column;
-            gap: 2rem; /* Increased gap between sections */
-            margin-top: 3rem; /* More margin from top */
-            margin-bottom: 3rem; /* More margin from bottom */
+            gap: 1.5rem; /* Reduced gap between sections */
+            margin-top: 1.5rem; /* Reduced margin from top */
+            margin-bottom: 1.5rem; /* Reduced margin from bottom */
             border: 1px solid #30363d; /* Subtle border */
         }
         input[type="text"],
@@ -114,6 +114,65 @@
             color: #f87171; /* Lighter red on hover */
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
         }
+        /* Edit button - subtle blue */
+        .edit-button {
+            background-color: #1a2a3a; /* Dark blue-gray */
+            color: #60a5fa; /* Blue text */
+            padding: 0.4rem 0.6rem; /* Smaller padding for icon button */
+            border-radius: 0.375rem; /* Slightly rounded */
+            box-shadow: none;
+            border: 1px solid #3b82f6; /* Blue border */
+            margin-right: 0.5rem; /* Space from delete button */
+        }
+        .edit-button:hover {
+            background-color: #2a3a4a; /* Darker blue-gray on hover */
+            transform: translateY(-1px);
+            color: #93c5fd; /* Lighter blue on hover */
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Timer buttons - VERY VERY SMALL */
+        .timer-button {
+            background-color: #30363d; /* Dark gray for timer buttons */
+            color: #c9d1d9;
+            border: 1px solid #4a5568;
+            padding: 0.1rem 0.3rem; /* Even smaller padding */
+            font-weight: 500;
+            letter-spacing: normal;
+            font-size: 0.6rem; /* Even smaller font size */
+            border-radius: 0.2rem; /* Even smaller border radius */
+            min-width: 40px; /* Ensure buttons are not too squished */
+        }
+        .timer-button:hover {
+            background-color: #4a5568;
+            transform: translateY(-1px);
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2); /* Smaller shadow */
+        }
+        .timer-button.start {
+            background: linear-gradient(45deg, #10b981, #34d399); /* Green gradient */
+            color: white;
+            border: none;
+        }
+        .timer-button.start:hover {
+            background: linear-gradient(45deg, #059669, #22c55e);
+        }
+        .timer-button.stop {
+            background: linear-gradient(45deg, #f59e0b, #fbbf24); /* Amber gradient */
+            color: white;
+            border: none;
+        }
+        .timer-button.stop:hover {
+            background: linear-gradient(45deg, #d97706, #f59e0b);
+        }
+        .timer-button.reset {
+            background: linear-gradient(45deg, #ef4444, #f87171); /* Red gradient */
+            color: white;
+            border: none;
+        }
+        .timer-button.reset:hover {
+            background: linear-gradient(45deg, #dc2626, #ef4444);
+        }
+
 
         /* Section backgrounds - unified dark tones */
         .section-card {
@@ -153,59 +212,54 @@
         #messageBox.success { background-color: #1c4a1c !important; color: #a7f3d0 !important; border-color: #10b981 !important; } /* Dark green, light green text, green border */
         #messageBox.info { background-color: #1c2a4a !important; color: #93c5fd !important; border-color: #3b82f6 !important; } /* Dark blue, light blue text, blue border */
 
-        /* Header Specifics */
-        .header-title {
-            font-family: 'Space Mono', monospace; /* Futuristic font for title */
-            font-size: 3.5rem; /* Larger title */
-            letter-spacing: -0.05em; /* Tighter letter spacing */
-            line-height: 1;
-            margin-bottom: 0.5rem;
-        }
-        .user-id-text {
-            font-family: 'Space Mono', monospace; /* Futuristic font for user ID */
-            color: #8b949e; /* Muted gray */
-            font-size: 0.8rem;
-            margin-top: 0.5rem;
+        /* Total Workout Timer - now at the very top, centered, with inline buttons */
+        .total-workout-timer-compact {
+            display: flex;
+            flex-direction: row; /* Keep time and buttons in a row */
+            align-items: center;
+            justify-content: center; /* Center the whole block */
+            padding: 0.1rem 0.3rem; /* Very small padding */
+            background-color: #0d1117; /* Very dark background for minimal footprint */
+            border-radius: 0.3rem;
+            border: 1px solid #30363d;
+            box-shadow: inset 0 0 2px rgba(0, 255, 255, 0.02); /* Even more subtle glow */
+            width: fit-content; /* Shrink to content width */
+            gap: 0.3rem; /* Reduced space between timer and buttons */
+            margin-top: 0.5rem; /* Closer to the top of the app container */
+            margin-bottom: 0.5rem; /* Reduced space before set timer */
         }
 
-        /* Workout Item Styling */
-        .workout-item {
-            background-color: #0d1117; /* Deep dark for individual items */
-            border-radius: 0.5rem;
-            padding: 1rem 1.25rem;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-            border: 1px solid #30363d;
-            transition: transform 0.1s ease-in-out, box-shadow 0.1s ease-in-out;
+        .total-workout-timer-compact .timer-display {
+            font-size: 1.2rem; /* Even smaller font for total timer */
+            margin-bottom: 0; /* No margin below time */
+            line-height: 1; /* Tighter line height */
         }
-        .workout-item:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0, 255, 255, 0.15); /* Subtle cyan hover glow */
+
+        .total-workout-timer-compact .timer-buttons-row {
+            display: flex; /* Ensure buttons are in a row */
+            gap: 0.05rem; /* Extremely tight button spacing */
         }
-        .workout-name {
-            font-weight: 600;
-            color: #e6edf3; /* Lighter text for name */
-            font-size: 1.1rem;
+
+        /* Set Timer Section Specifics - also smaller */
+        .set-timer-section {
+            padding: 0.6rem 1.2rem; /* Reduced padding for the section card itself */
+            margin-bottom: 0.5rem; /* Reduced margin before the next section */
+            margin-top: 0.5rem; /* Reduced space from total timer */
         }
-        .workout-details {
-            color: #8b949e; /* Muted gray for details */
-            font-size: 0.9rem;
-            font-family: 'Space Mono', monospace;
+        .set-timer-section .timer-display {
+            font-size: 1.8rem; /* Reduced font size for set timer */
+            margin-bottom: 0.3rem; /* Reduced margin */
         }
-        .category-heading {
-            font-family: 'Space Mono', monospace;
-            color: #00bcd4; /* Cyan for category headings */
-            font-size: 1.75rem; /* Larger category headings */
-            border-bottom: 1px solid #30363d;
-            padding-bottom: 0.75rem;
-            margin-bottom: 1.5rem;
-            letter-spacing: 0.02em;
+        .set-timer-section .timer-buttons-row {
+            gap: 0.2rem; /* Small gap between buttons */
         }
+
     </style>
     <!-- Firebase SDK CDN -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, collection, query, addDoc, deleteDoc, doc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getFirestore, collection, query, addDoc, deleteDoc, doc, onSnapshot, updateDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         // Global variables for Firebase instances and data
         let app;
@@ -221,8 +275,35 @@
         let newWorkoutCategorySelect;
         let addWorkoutButton;
         let workoutsListContainer;
-        let userIdDisplay;
         let messageBox;
+
+        // Edit Modal UI Elements
+        let editModal;
+        let editWorkoutId; // Stores the ID of the workout being edited
+        let editWorkoutNameDisplay;
+        let editWorkoutWeightRepsInput;
+        let saveEditButton;
+        let closeEditModalButton;
+
+        // Timer UI Elements
+        let totalWorkoutTimerDisplay;
+        let startWorkoutBtn;
+        let stopWorkoutBtn;
+        let resetWorkoutBtn;
+
+        let setTimerDisplay;
+        let startSetBtn;
+        let stopSetBtn;
+        let resetSetBtn;
+
+        // Timer Variables
+        let totalWorkoutInterval = null;
+        let totalWorkoutStartTime = 0;
+        let totalWorkoutElapsedTime = 0; // To store elapsed time for pausing
+
+        let setTimerInterval = null;
+        let setStartTime = 0;
+        let setElapsedTime = 0; // To store elapsed time for pausing
 
         // Firebase configuration (from your previous prompt)
         const firebaseConfig = {
@@ -256,6 +337,88 @@
                 messageBox.classList.remove('show');
                 messageBox.className = 'message-box'; // Reset classes after hiding
             }, duration);
+        }
+
+        /**
+         * Formats milliseconds into HH:MM:SS string.
+         * @param {number} ms - Milliseconds to format.
+         * @returns {string} Formatted time string.
+         */
+        function formatTime(ms) {
+            const totalSeconds = Math.floor(ms / 1000);
+            const hours = Math.floor(totalSeconds / 3600);
+            const minutes = Math.floor((totalSeconds % 3600) / 60);
+            const seconds = totalSeconds % 60;
+
+            const pad = (num) => String(num).padStart(2, '0');
+            return `${pad(hours)}:${pad(minutes)}:${pad(seconds)}`;
+        }
+
+        /**
+         * Starts the total workout timer.
+         */
+        function startTotalWorkoutTimer() {
+            if (totalWorkoutInterval) return; // Prevent multiple intervals
+
+            totalWorkoutStartTime = Date.now() - totalWorkoutElapsedTime;
+            totalWorkoutInterval = setInterval(() => {
+                totalWorkoutElapsedTime = Date.now() - totalWorkoutStartTime;
+                totalWorkoutTimerDisplay.textContent = formatTime(totalWorkoutElapsedTime);
+            }, 1000);
+            showMessage("Workout timer started!", 'info', 1500);
+        }
+
+        /**
+         * Stops the total workout timer.
+         */
+        function stopTotalWorkoutTimer() {
+            clearInterval(totalWorkoutInterval);
+            totalWorkoutInterval = null;
+            showMessage("Workout timer stopped.", 'info', 1500);
+        }
+
+        /**
+         * Resets the total workout timer.
+         */
+        function resetTotalWorkoutTimer() {
+            stopTotalWorkoutTimer();
+            totalWorkoutElapsedTime = 0;
+            totalWorkoutTimerDisplay.textContent = formatTime(totalWorkoutElapsedTime);
+            showMessage("Workout timer reset.", 'info', 1500);
+        }
+
+        /**
+         * Starts the set timer (rest timer).
+         */
+        function startSetTimer() {
+            if (setTimerInterval) return; // Prevent multiple intervals
+
+            setStartTime = Date.now() - setElapsedTime;
+            setTimerInterval = setInterval(() => {
+                setElapsedTime = Date.now() - setStartTime;
+                setTimerDisplay.textContent = formatTime(setElapsedTime);
+            }, 1000);
+            showMessage("Set timer started!", 'info', 1500);
+        }
+
+        /**
+         * Stops the set timer.
+         */
+        function stopSetTimer() {
+            clearInterval(setTimerInterval);
+            setTimerInterval = null;
+            showMessage("Set timer stopped.", 'info', 1500);
+        }
+
+        /**
+         * Resets the set timer and immediately restarts it.
+         */
+        function resetSetTimer() {
+            stopSetTimer(); // Stop any existing interval
+            setElapsedTime = 0; // Reset elapsed time
+            setTimerDisplay.textContent = formatTime(setElapsedTime); // Update display
+            showMessage("Set timer reset and restarted!", 'info', 1500);
+            startSetTimer(); // Immediately restart the timer
         }
 
         /**
@@ -300,60 +463,34 @@
                                 <p class="workout-name">${workout.name}</p>
                                 <p class="workout-details">${workout.weightReps}</p>
                             </div>
-                            <button class="delete-button" data-id="${workout.id}" aria-label="Delete workout">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                                    <path fillRule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm6 0a1 1 0 012 0v6a1 1 0 11-2 0V8z" clipRule="evenodd" />
-                                </svg>
-                            </button>
+                            <div class="flex items-center">
+                                <button class="edit-button" data-id="${workout.id}" data-name="${workout.name}" data-weightreps="${workout.weightReps}" aria-label="Edit workout">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                        <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.389-8.389-2.828-2.828z" />
+                                    </svg>
+                                </button>
+                                <button class="delete-button" data-id="${workout.id}" aria-label="Delete workout">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                        <path fillRule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm6 0a1 1 0 012 0v6a1 1 0 11-2 0V8z" clipRule="evenodd" />
+                                    </svg>
+                                </button>
+                            </div>
                         `;
                         ulElement.appendChild(listItem);
 
-                        // Attach event listener to the delete button
+                        // Attach event listeners to the buttons
+                        listItem.querySelector('.edit-button').addEventListener('click', (e) => {
+                            const workoutId = e.currentTarget.dataset.id;
+                            const workoutName = e.currentTarget.dataset.name;
+                            const workoutWeightReps = e.currentTarget.dataset.weightreps;
+                            openEditModal(workoutId, workoutName, workoutWeightReps);
+                        });
                         listItem.querySelector('.delete-button').addEventListener('click', (e) => {
                             const workoutId = e.currentTarget.dataset.id;
                             deleteWorkout(workoutId);
                         });
                     });
                 }
-            });
-        }
-
-        /**
-         * Listens for real-time updates to workout data in Firestore.
-         */
-        function listenForWorkouts() {
-            if (!db || !userId) {
-                console.warn("Firestore db or userId not initialized. Cannot listen for workouts.");
-                return;
-            }
-
-            const appIdForFirestore = firebaseConfig.projectId; // Use projectId as appId
-            const workoutsCollectionRef = collection(db, `artifacts/${appIdForFirestore}/users/${userId}/workouts`);
-            const q = query(workoutsCollectionRef);
-
-            onSnapshot(q, (snapshot) => {
-                const fetchedWorkouts = snapshot.docs.map(doc => ({
-                    id: doc.id,
-                    ...doc.data()
-                }));
-
-                // Sort workouts client-side by category and then by name
-                fetchedWorkouts.sort((a, b) => {
-                    const categoryOrder = ['chest', 'tricep', 'bicep', 'back', 'shoulder', 'other'];
-                    const categoryA = categoryOrder.indexOf(a.category);
-                    const categoryB = categoryOrder.indexOf(b.category);
-
-                    if (categoryA !== categoryB) {
-                        return categoryA - categoryB;
-                    }
-                    return a.name.localeCompare(b.name);
-                });
-                workouts = fetchedWorkouts; // Update the global workouts array
-                renderWorkouts(); // Re-render the UI
-                console.log("Workouts updated from Firestore.");
-            }, (error) => {
-                console.error("Error fetching workouts:", error);
-                showMessage("Error loading workouts. Please check your connection.", 'error');
             });
         }
 
@@ -418,6 +555,57 @@
             }
         }
 
+        /**
+         * Opens the edit modal and populates it with workout data.
+         * @param {string} id - The ID of the workout to edit.
+         * @param {string} name - The name of the workout.
+         * @param {string} weightReps - The current weight and reps string.
+         */
+        function openEditModal(id, name, weightReps) {
+            editWorkoutId = id;
+            editWorkoutNameDisplay.textContent = name;
+            editWorkoutWeightRepsInput.value = weightReps;
+            editModal.classList.add('open');
+        }
+
+        /**
+         * Closes the edit modal.
+         */
+        function closeEditModal() {
+            editModal.classList.remove('open');
+        }
+
+        /**
+         * Updates a workout entry in Firestore.
+         */
+        async function updateWorkout() {
+            const newWeightReps = editWorkoutWeightRepsInput.value.trim();
+
+            if (!newWeightReps) {
+                showMessage("Weight/Reps cannot be empty.", 'error');
+                return;
+            }
+            if (!db || !userId || !editWorkoutId) {
+                console.error("Firestore not initialized, user not authenticated, or no workout selected for edit.");
+                showMessage("Application is not ready or workout not selected.", 'error');
+                return;
+            }
+
+            try {
+                const appIdForFirestore = firebaseConfig.projectId;
+                const workoutDocRef = doc(db, `artifacts/${appIdForFirestore}/users/${userId}/workouts`, editWorkoutId);
+                await updateDoc(workoutDocRef, {
+                    weightReps: newWeightReps,
+                    timestamp: new Date().toISOString() // Update timestamp to reflect last edit
+                });
+                showMessage("Workout updated successfully!", 'success');
+                closeEditModal(); // Close modal after successful update
+            } catch (e) {
+                console.error("Error updating document: ", e);
+                showMessage("Failed to update workout. Please try again.", 'error');
+            }
+        }
+
         // Initialize Firebase and UI elements when the window loads
         window.onload = async () => {
             // Assign UI elements to global JS variables
@@ -426,8 +614,25 @@
             newWorkoutCategorySelect = document.getElementById('newWorkoutCategory');
             addWorkoutButton = document.getElementById('addWorkoutBtn');
             workoutsListContainer = document.getElementById('workoutsList');
-            userIdDisplay = document.getElementById('userIdDisplay');
             messageBox = document.getElementById('messageBox');
+
+            // Assign Edit Modal UI Elements
+            editModal = document.getElementById('editWorkoutModal');
+            editWorkoutNameDisplay = document.getElementById('editWorkoutNameDisplay');
+            editWorkoutWeightRepsInput = document.getElementById('editWorkoutWeightReps');
+            saveEditButton = document.getElementById('saveEditBtn');
+            closeEditModalButton = document.getElementById('closeEditModalBtn');
+
+            // Assign Timer UI Elements
+            totalWorkoutTimerDisplay = document.getElementById('totalWorkoutTimerDisplay');
+            startWorkoutBtn = document.getElementById('startWorkoutBtn');
+            stopWorkoutBtn = document.getElementById('stopWorkoutBtn');
+            resetWorkoutBtn = document.getElementById('resetWorkoutBtn');
+
+            setTimerDisplay = document.getElementById('setTimerDisplay');
+            startSetBtn = document.getElementById('startSetBtn');
+            stopSetBtn = document.getElementById('stopSetBtn');
+            resetSetBtn = document.getElementById('resetSetBtn');
 
             // Populate category dropdown
             categories.forEach(category => {
@@ -439,6 +644,24 @@
 
             // Add event listeners
             addWorkoutButton.addEventListener('click', addWorkout);
+            saveEditButton.addEventListener('click', updateWorkout);
+            closeEditModalButton.addEventListener('click', closeEditModal);
+            // Close modal if clicked outside content
+            editModal.addEventListener('click', (e) => {
+                if (e.target === editModal) {
+                    closeEditModal();
+                }
+            });
+
+            // Timer Event Listeners
+            startWorkoutBtn.addEventListener('click', startTotalWorkoutTimer);
+            stopWorkoutBtn.addEventListener('click', stopTotalWorkoutTimer);
+            resetWorkoutBtn.addEventListener('click', resetTotalWorkoutTimer);
+
+            startSetBtn.addEventListener('click', startSetTimer);
+            stopSetBtn.addEventListener('click', stopSetTimer);
+            resetSetBtn.addEventListener('click', resetSetTimer);
+
 
             // --- Firebase Initialization ---
             try {
@@ -449,9 +672,7 @@
                 onAuthStateChanged(auth, async (user) => {
                     if (user) {
                         userId = user.uid;
-                        if (userIdDisplay) {
-                            userIdDisplay.textContent = userId;
-                        }
+                        // User ID display removed as per request
                         console.log("Authenticated with user ID:", userId);
                         listenForWorkouts(); // Start listening for workouts
                     } else {
@@ -464,9 +685,7 @@
                             localStorage.setItem('anonymousWorkoutUserId', storedAnonymousId);
                         }
                         userId = storedAnonymousId; // Use the stored or newly generated anonymous ID
-                        if (userIdDisplay) {
-                            userIdDisplay.textContent = userId;
-                        }
+                        // User ID display removed as per request
                         console.log("Signed in anonymously or using stored anonymous ID:", userId);
                         listenForWorkouts(); // Start listening for workouts
                         try {
@@ -486,15 +705,26 @@
 </head>
 <body class="min-h-screen bg-gradient-to-br from-gray-900 to-gray-700 text-white font-inter p-4 flex flex-col items-center">
     <div id="app-container">
-        <!-- Header -->
-        <header class="w-full text-center py-6">
-            <h1 class="header-title text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-indigo-500 drop-shadow-lg">
-                Quantum Lift Log
-            </h1>
-            <p class="user-id-text">
-                User ID: <span id="userIdDisplay" class="font-mono text-xs break-all">Loading...</span>
-            </p>
-        </header>
+        <!-- Total Workout Timer - Moved to the very top, centered, with inline buttons -->
+        <div class="total-workout-timer-compact">
+            <div id="totalWorkoutTimerDisplay" class="timer-display text-cyan-400">00:00:00</div>
+            <div class="timer-buttons-row">
+                <button id="startWorkoutBtn" class="timer-button start">Start</button>
+                <button id="stopWorkoutBtn" class="timer-button stop">Stop</button>
+                <button id="resetWorkoutBtn" class="timer-button reset">Reset</button>
+            </div>
+        </div>
+
+        <!-- Set Timer Section (now standalone and smaller) -->
+        <section class="section-card text-center set-timer-section">
+            <h2 class="text-xl font-semibold mb-2 text-gray-200">Set Timer</h2>
+            <div id="setTimerDisplay" class="timer-display text-indigo-400">00:00:00</div>
+            <div class="timer-buttons-row">
+                <button id="startSetBtn" class="timer-button start">Start</button>
+                <button id="stopSetBtn" class="timer-button stop">Stop</button>
+                <button id="resetSetBtn" class="timer-button reset">Reset</button>
+            </div>
+        </section>
 
         <!-- Add Workout Form -->
         <section class="section-card">
@@ -531,5 +761,24 @@
 
     <!-- Message Box (hidden by default) -->
     <div id="messageBox" class="p-4 rounded-lg shadow-lg"></div>
+
+    <!-- Edit Workout Modal -->
+    <div id="editWorkoutModal" class="modal-overlay">
+        <div class="modal-content relative">
+            <button id="closeEditModalBtn" class="modal-close-button">&times;</button>
+            <h2 class="text-2xl font-semibold mb-4 text-center text-gray-200">Edit Lift</h2>
+            <div class="space-y-4">
+                <p class="text-lg font-medium text-gray-100">Workout: <span id="editWorkoutNameDisplay" class="font-bold text-cyan-400"></span></p>
+                <input
+                    type="text"
+                    id="editWorkoutWeightReps"
+                    placeholder="New Weight x Reps (e.g., 190kg x 5)"
+                />
+                <button id="saveEditBtn" class="w-full primary-button">
+                    Save Changes
+                </button>
+            </div>
+        </div>
+    </div>
 </body>
 </html>
