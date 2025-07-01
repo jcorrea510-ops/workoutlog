@@ -254,6 +254,27 @@
             gap: 0.2rem; /* Small gap between buttons */
         }
 
+        /* Modal Styles - Adjusted for display: none control */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: rgba(0, 0, 0, 0.8); /* Darker, more opaque overlay */
+            display: flex; /* Use flex for centering content */
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
+            /* Initially hidden by JavaScript, not by default CSS properties */
+        }
+        .modal-overlay.open {
+            opacity: 1;
+            visibility: visible;
+        }
     </style>
     <!-- Firebase SDK CDN -->
     <script type="module">
@@ -565,7 +586,11 @@
             editWorkoutId = id;
             editWorkoutNameDisplay.textContent = name;
             editWorkoutWeightRepsInput.value = weightReps;
-            editModal.classList.add('open');
+            editModal.style.display = 'flex'; // Show the modal
+            // Allow transition to apply opacity/visibility after display is set
+            setTimeout(() => {
+                editModal.classList.add('open');
+            }, 10); // Small delay to allow display change to register
         }
 
         /**
@@ -573,6 +598,10 @@
          */
         function closeEditModal() {
             editModal.classList.remove('open');
+            // Hide the modal after transition completes
+            setTimeout(() => {
+                editModal.style.display = 'none';
+            }, 300); // Match CSS transition duration
         }
 
         /**
@@ -622,6 +651,12 @@
             editWorkoutWeightRepsInput = document.getElementById('editWorkoutWeightReps');
             saveEditButton = document.getElementById('saveEditBtn');
             closeEditModalButton = document.getElementById('closeEditModalBtn');
+
+            // --- FIX: Ensure the edit modal is hidden on load by default using display:none ---
+            if (editModal) {
+                editModal.style.display = 'none'; // Force hide it initially
+            }
+            // --- END FIX ---
 
             // Assign Timer UI Elements
             totalWorkoutTimerDisplay = document.getElementById('totalWorkoutTimerDisplay');
@@ -701,6 +736,32 @@
                 showMessage("Firebase initialization failed. Check console for details.", 'error');
             }
         };
+
+        /**
+         * Listens for real-time updates to workouts in Firestore.
+         */
+        function listenForWorkouts() {
+            if (!db || !userId) {
+                console.warn("Firestore or User ID not available for listening to workouts.");
+                return;
+            }
+            const appIdForFirestore = firebaseConfig.projectId;
+            const workoutsCollectionRef = collection(db, `artifacts/${appIdForFirestore}/users/${userId}/workouts`);
+
+            // Set up real-time listener
+            onSnapshot(workoutsCollectionRef, (snapshot) => {
+                workouts = []; // Clear existing workouts
+                snapshot.forEach(doc => {
+                    workouts.push({ id: doc.id, ...doc.data() });
+                });
+                // Sort workouts by timestamp, newest first
+                workouts.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+                renderWorkouts(); // Re-render the list with updated data
+            }, (error) => {
+                console.error("Error listening to workouts:", error);
+                showMessage("Failed to load workouts in real-time.", 'error');
+            });
+        }
     </script>
 </head>
 <body class="min-h-screen bg-gradient-to-br from-gray-900 to-gray-700 text-white font-inter p-4 flex flex-col items-center">
